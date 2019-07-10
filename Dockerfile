@@ -118,7 +118,7 @@ RUN curl -sS https://getcomposer.org/installer | php \
     && /usr/local/bin/composer global require hirak/prestissimo
 
 # Install phpunit and put binary into $PATH
-RUN curl -sSLo phpunit.phar https://phar.phpunit.de/phpunit.phar \
+RUN curl -sSLo phpunit.phar https://phar.phpunit.de/phpunit-7.phar \
     && chmod 755 phpunit.phar \
     && mv phpunit.phar /usr/local/bin/ \
     && ln -s /usr/local/bin/phpunit.phar /usr/local/bin/phpunit
