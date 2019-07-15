@@ -7,6 +7,7 @@ RUN additionalPackages=" \
         openssh-client \
         rsync \
         subversion \
+        sudo \
     " \
     buildDeps=" \
         freetds-dev \
