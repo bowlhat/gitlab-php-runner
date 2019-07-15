@@ -6,6 +6,7 @@ RUN additionalPackages=" \
         msmtp-mta \
         openssh-client \
         rsync \
+        subversion \
     " \
     buildDeps=" \
         freetds-dev \
@@ -29,17 +30,17 @@ RUN additionalPackages=" \
         libxml2-dev \
         libxpm-dev \
         libxslt1-dev \
+        libzip-dev \
         zlib1g-dev \
     " \
-    && runDeps=" \
+    runDeps=" \
         libc-client2007e \
         libenchant1c2a \
         libfreetype6 \
         libicu57 \
         libjpeg62-turbo \
         libmcrypt4 \
-        libpng-dev \
-        libzip-dev \
+        libzip4 \
         libpng16-16 \
         libpq5 \
         libsybdb5 \
@@ -50,7 +51,7 @@ RUN additionalPackages=" \
         snmp \
         gnupg \
     " \
-    && phpModules=" \
+    phpModules=" \
         bcmath \
         bz2 \
         calendar \
@@ -107,7 +108,9 @@ RUN additionalPackages=" \
            rm -f /usr/local/etc/php/conf.d/docker-php-ext-$ext.ini; \
        done \
     && docker-php-source delete \
-    && docker-php-ext-enable $phpModules
+    && docker-php-ext-enable $phpModules \
+    && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false -o APT::AutoRemove::SuggestsImportant=false $buildDeps \
+    && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Install composer and prestissimo plugin and put binary into $PATH
 RUN curl -sS https://getcomposer.org/installer | php \
@@ -132,9 +135,18 @@ RUN curl -OL https://squizlabs.github.io/PHP_CodeSniffer/phpcs.phar \
     && ln -s /usr/local/bin/phpcbf.phar /usr/local/bin/phpcbf
 
 # Install Node.js & Yarn
-RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - \
+RUN buildDeps=" \
+        libpng-dev \
+        libzip-dev \
+    " \
+    runDeps=" \
+        libpng16-16 \
+        libzip4 \
+    " \
+    && curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - \
     && echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list \
     && curl -sL https://deb.nodesource.com/setup_10.x | bash - \
+    && apt-get update \
     && apt-get install -y unzip nodejs build-essential yarn \
     && yarn global add pngquant-bin jpegtran-bin cwebp-bin optipng-bin node-sass \
     && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false -o APT::AutoRemove::SuggestsImportant=false $buildDeps \
