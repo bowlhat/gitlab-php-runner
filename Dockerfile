@@ -1,4 +1,4 @@
-FROM php:7.1
+FROM php:7.1-stretch
 
 RUN additionalPackages=" \
         apt-transport-https \
